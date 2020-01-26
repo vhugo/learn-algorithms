@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// QuickFind eager approach for the Union-Find dynamic connectivity problem
+// QuickFind represents the eager approach for the Union-Find dynamic connectivity problem
 type QuickFind struct {
 	ids []int
 }
