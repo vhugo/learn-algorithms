@@ -20,3 +20,16 @@ Assuming "is connected to" is an equivalence relation:
 
 **Union method**: merge components containing *p* and *q*, change all entries
 whose id equals `id[p]` to `id[q]`.
+
+### Analysis
+
+Quick-find is too slow for huge problems.
+
+Cost Model: Number of array accesses (for read or write)
+
+| algorithm  | initialize | union | find |
+| ---------- | ---------- | ----- | ---- |
+| quick-find |     N      |   N   |   1  |
+
+*Union is too expensive*. It takes N<sup>2</sup> (quadratic) array accesses to process a sequence of
+N union commands on N objects.
