@@ -120,26 +120,30 @@ func TestQuickFindConnected(t *testing.T) {
 	}
 }
 
-var connected bool
+var connectedQF bool
 
-func BenchmarkQuickFind(b *testing.B) {
+func BenchmarkQF(b *testing.B) {
 	var qf *QuickFind
 
 	for _, bm := range []struct {
 		name string
 		n    int
 	}{
-		{"n 3", 3},
-		{"n 10", 10},
-		{"n 100", 100},
-		{"n 1000", 1000},
-		{"n 10000", 10000},
+		{"_____10", 10},
+		{"____100", 100},
+		{"__10_00", 1000},
+		{"_10_000", 10000},
+		{"100_000", 100000},
 	} {
 		b.Run(bm.name, func(b *testing.B) {
+			qf, _ = NewQuickFind(bm.n)
+
+			// allowing bechmark for array accesses removing allocation time
+			b.ResetTimer()
+
 			for i := 0; i < b.N; i++ {
-				qf, _ = NewQuickFind(bm.n)
 				qf.Union(bm.n-2, bm.n-1)
-				connected = qf.Connected(bm.n-1, bm.n-2)
+				connectedQF = qf.Connected(bm.n-1, bm.n-2)
 			}
 		})
 	}

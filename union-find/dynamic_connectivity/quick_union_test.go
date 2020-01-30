@@ -171,22 +171,26 @@ func TestQuickUnionConnected(t *testing.T) {
 
 var connectedQU bool
 
-func BenchmarkQuickUnion(b *testing.B) {
+func BenchmarkQU(b *testing.B) {
 	var qu *QuickUnion
 
 	for _, bm := range []struct {
 		name string
 		n    int
 	}{
-		{"n 3", 3},
-		{"n 10", 10},
-		{"n 100", 100},
-		{"n 1000", 1000},
-		{"n 10000", 10000},
+		{"_____10", 10},
+		{"____100", 100},
+		{"__10_00", 1000},
+		{"_10_000", 10000},
+		{"100_000", 100000},
 	} {
 		b.Run(bm.name, func(b *testing.B) {
+			qu, _ = NewQuickUnion(bm.n)
+
+			// allowing bechmark for array accesses removing allocation time
+			b.ResetTimer()
+
 			for i := 0; i < b.N; i++ {
-				qu, _ = NewQuickUnion(bm.n)
 				qu.Union(bm.n-2, bm.n-1)
 				connectedQU = qu.Connected(bm.n-1, bm.n-2)
 			}
