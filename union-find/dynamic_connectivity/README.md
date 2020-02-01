@@ -9,7 +9,7 @@ Assuming "is connected to" is an equivalence relation:
 - transitive: if *p* is connected to *q* and *q* is connected to *r*, then *p*
   is connected to *r*
 
-## Quick-find (eager approach)
+## Quick-Find (eager approach)
 
 Maintains the invariant that *p* and *q* are connected if and only if `id[p]`
 is equal to `id[q]`. In other words, in a single connected component all sites
@@ -24,7 +24,7 @@ must have the same value in `id[]`.
 **Union method**: merge components containing *p* and *q*, change all entries
 whose id equals `id[p]` to `id[q]`.
 
-## Quick-union (lazy approach)
+## Quick-Union (lazy approach)
 
 Based on the same data structure—the site-indexed `id[]` array as Quick-Find,
 but it uses a different interpretation of the values that leads to more
@@ -51,25 +51,52 @@ the other.
 **Union method**: merge components containing *p* and *q*, set the id of *p*'s
 root to the id of *q*'s root.
 
+## Weighted Quick-Union (improved quick-union)
+
+Rather than arbitrarily connecting the second tree to the first for union() in 
+the quick-union algorithm, we keep track of the size of each tree and always 
+connect the smaller tree to the larger. 
+
+**Data structure**:
+- Integer array `id[]` of length N.
+- Integer array `size[]` to count number of objects in the tree rooted at *i*.
+- Interpretation: `id[i]` is parent of *i*.
+- Root of *i* is `id[id[id[...id[i]...]]]`.
+
+**Find method**: check if *p* and *q* have the same root. Identical to 
+quick-union.
+
+**Union method**: merge components containing *p* and *q*, link root of smaller 
+tree to root of larger tree. Update the `size[]` array.
+
 ## Analysis
 
-**[Quick-find](#quick-find-eager-approach)** is too slow for huge problems. *Union is too expensive*.
+**[Quick-Find](#quick-find-eager-approach)** is too slow for huge problems. *Union is too expensive*.
 It takes N<sup>2</sup> (quadratic) array accesses to process a sequence of
 N union commands on N objects. Trees are flat, but too expensive to keep them flat.
 
-**[Quick-union](#quick-union-lazy-approach)** is also too slow. *Find too expensive*,
-could be N array accesses. However it has a linear growth  
+**[Quick-Union](#quick-union-lazy-approach)** is also too slow. *Find too expensive*,
+could be N array accesses, but it has a linear growth. Trees can be too tall, so 
+expensive to search roots. 
+
+**[Weighted Quick-Union](#weighted-quick-union-improved-quick-union)** find now 
+takes time proportional to the depth of *p* and *q*. Union takes constant time, 
+given roots. It is guaranteed that the depth of any node in the tree is at most 
+the logarithm to the base two of N. Trees are much lower, saving time to 
+search roots.
 
 ### Cost Model
 
 Number of array accesses (for read or write)
 
-| algorithm   | initialize | union             | find |
-| ----------- | ---------- | ----------------- | ---- |
-| quick-find  |     N      |   N               |   1  |
-| quick-union |     N      |   N<sup>†</sup>   |   N  |
+| algorithm   | initialize | union                | find    |
+| ----------- | ---------- | -------------------- | ------- |
+| quick-find  |     N      |   N                  |   1     |
+| quick-union |     N      |   N<sup>†</sup>      |   N     |
+| weighted QU |     N      |   lg N<sup>†</sup>   |   lg N  |
 
 <sup>†</sup>  includes cost of finding roots
+lg = base-2 logarithm
 
 Ref.:
 - [1.5 Case Study: Union-Find](https://algs4.cs.princeton.edu/15uf/)
